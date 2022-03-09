@@ -4,43 +4,69 @@ This is a BalenaHub 'Block' project to enable flexible management of on-device n
 
 # Block Configuration
 
-*TBD*
+This is an initial example which will configure a node-exporter service on an internal port :9100 which is then routed by Traefik to be on a path of the public URL on :80
 
-Add the following to a `docker-compose.yml` for your fleet. At this time we expose the `node-exporter` on port 80 i.e. the public URL.
+Add the following to a `docker-compose.yml` for your fleet.
 
-**NOTE:** I couldn't get this working for the raspberrypi4-64 which is what I am testing here. It appears to be related to an issue with Balena `--platform` parsing and I had to implement the fix shown [here](https://github.com/balena-io/balena-cli/issues/1408). See below.
-
-```
-version: '2'
-
-services:
-  node_exporter:
-    image: dynamicdevices/balenablock-node-exporter
-    restart: always
-    privileged: false
-    ports:
-      - '80:9100'
-```
-
-For the RPi-64 I had to pin the image to the current latest arm64 SHA. Note that this may be out of date in future. e.g.
+**NOTE:** I couldn't get this working for the raspberrypi4-64 which is what I am testing here. It appears to be related to an issue with Balena `--platform` parsing and I had to implement the fix shown [here](https://github.com/balena-io/balena-cli/issues/1408).
 
 ```
 version: '2'
 
 services:
-  node_exporter:
+  node-exporter:
+    # Use a specific hash of the node-exporter (which you can find on Docker Hub) as we don't currently pick up architectures correctly
     image: dynamicdevices/balenablock-node-exporter@sha256:9c03ad3c3c7b6201c0f5a644d5d7023e8ecb42767c55945082807e16e4eb60de
+    # Restart the container if there's a problem
     restart: always
+    # No needfor enhanced privileges
     privileged: false
     ports:
-      - '80:9100'
+    # The standard node-exporter port is 9100
+      - '9100:9100'
+    labels:
+      # Enable traefik support for this container
+      - "traefik.enable=true"
+      # Make it available on the "web" entrypoint which is defined below as :80
+      - "traefik.http.routers.node-exporter.entrypoints=web"
+      # Add a specific path prefix that will be expected on the URL suffix
+      - "traefik.http.routers.node-exporter.rule=PathPrefix(`/metrics`)"
+  traefik:
+    image: dynamicdevices/balenablock-traefik@sha256:072770347a92b1828efca812756051c1652333247fec1e56f7de3077c0b59e7e
+    container_name: traefik
+    command:
+      - "--log.level=DEBUG"
+      - "--api.dashboard=true"
+      # Uncomment this to enable the Traefik WebUI on port :8080
+      #- "--api.insecure"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/balena-engine.sock"
+      #- "--providers.docker.exposedbydefault=true"
+      - "--entrypoints.web.address=:80"
+    restart: always
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Dashboard port
+      - "8080:8080"
+    labels:
+      # So that Traefik can listen to the Docker events
+      - "io.balena.features.balena-socket=1"
 ```
 
-With this Fleet configuration deployed you should be able browse to your public endpoint (:80 on the balena device dashboard) and see a list of key value pairs of device metrics)
+With this Fleet configuration deployed you should be able browse to your public endpoint (as seen on the device dashboard)
 
-e.g. `https://your-device-id.balena-devices.com/metrics`
+If  you browse to the base URL you will see an error but if you browse to https://my-balena-device-id.balena-devices.com/metrics your requested will be proxied by Traefik to the node-exporter webserver running on the internal port :9100 on the device
 
-![image](https://user-images.githubusercontent.com/1537834/156930694-47536493-83a1-4fb8-b167-a2e5c36ddd9d.png)
+You'll then see a list of key value pairs of device metrics)
+
+The other thing you can do here is enable insecure mode for the Traefik WebUI on port :8080 to see how it is configured.
+
+You can then tunnel with the Balena CLI as follows:
+
+`balena tunnel your-fleet-name 8080:8080`
+
+Use a browser to go to [localhost:8080](http://localhost:8080) and you'll see the Traefik WebUI
 
 # Rebuilding the Docker image and pushing to your own Docker registry
 
