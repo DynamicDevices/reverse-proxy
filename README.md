@@ -64,6 +64,11 @@ You'll then see a list of key value pairs of device metrics)
 
 The other thing you can do here is enable insecure mode for the Traefik WebUI on port :8080 to see how it is configured.
 
+```
+      # Uncomment this to enable the Traefik WebUI on port :8080
+      - "--api.insecure"
+```
+
 You can then tunnel with the Balena CLI as follows:
 
 `balena tunnel your-fleet-name 8080:8080`
