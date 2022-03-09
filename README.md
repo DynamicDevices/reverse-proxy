@@ -1,6 +1,6 @@
 # Overview
 
-This is a BalenaHub 'Block' project to enable flexible management of on-device networking using [Traefik](https://traefik.io/)
+This is a Balena [Block](https://www.balena.io/blog/balenablocks-public-roadmap/) project to enable flexible management of on-device networking using [Traefik](https://traefik.io/)
 
 # Block Configuration
 
