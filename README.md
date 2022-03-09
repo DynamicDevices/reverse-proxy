@@ -60,6 +60,8 @@ If  you browse to the base URL you will see an error but if you browse to https:
 
 You'll then see a list of key value pairs of device metrics)
 
+![image](https://user-images.githubusercontent.com/1537834/157541771-a4f65193-6799-404a-9a62-767322fb444c.png)
+
 The other thing you can do here is enable insecure mode for the Traefik WebUI on port :8080 to see how it is configured.
 
 You can then tunnel with the Balena CLI as follows:
@@ -67,6 +69,8 @@ You can then tunnel with the Balena CLI as follows:
 `balena tunnel your-fleet-name 8080:8080`
 
 Use a browser to go to [localhost:8080](http://localhost:8080) and you'll see the Traefik WebUI
+
+![image](https://user-images.githubusercontent.com/1537834/157541959-fd4c22a7-961e-4e51-aa90-6f4b65272c59.png)
 
 # Rebuilding the Docker image and pushing to your own Docker registry
 
