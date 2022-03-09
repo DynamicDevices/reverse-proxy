@@ -4,4 +4,3 @@ FROM traefik
 
 MAINTAINER Alex J Lennon <ajlennon@dynamicdevices.co.uk>
 
-CMD --api --api.dashboard --providers.docker --entrypoints.web.address=:80

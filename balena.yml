@@ -1,17 +1,17 @@
 name: balena-reverse-proxy
 description: >-
-  A containerised implementation of the Traefik for on device network management
+  A containerised implementation of the Traefik for on-device reverse-proxy management
 version: 0.0.1
 type: sw.application
 assets:
   repository:
     type: blob.asset
     data:
-      url: 'https://github.com/dynamicdevices/balena-reverse-proxy'
+      url: 'https://github.com/dynamicdevices/reverse-proxy'
   logo:
     type: blob.asset
     data:
-      url: 'https://github.com/DynamicDevices/balena-reverse-proxy/raw/main/logo.png'
+      url: 'https://github.com/DynamicDevices/reverse-proxy/raw/main/logo.png'
 data:
   defaultDeviceType: raspberrypi4-64
   supportedDeviceTypes:

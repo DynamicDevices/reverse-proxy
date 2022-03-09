@@ -22,7 +22,9 @@ function build_and_push_image () {
 }
 
 function create_and_push_manifest() {
-  docker manifest create $DOCKER_REPO/$BLOCK_NAME:latest --amend $DOCKER_REPO/$BLOCK_NAME:raspberrypi3 --amend $DOCKER_REPO/$BLOCK_NAME:raspberrypi4-64
+#  docker manifest create $DOCKER_REPO/$BLOCK_NAME:latest --amend $DOCKER_REPO/$BLOCK_NAME:raspberrypi3 --amend $DOCKER_REPO/$BLOCK_NAME:raspberrypi4-64
+  docker manifest create $DOCKER_REPO/$BLOCK_NAME:latest --amend $DOCKER_REPO/$BLOCK_NAME:raspberrypi4-64
+  docker manifest push $DOCKER_REPO/$BLOCK_NAME:latest
 }
 
 # YOu can pass in a repo (such as a test docker repo) or accept the default
@@ -30,6 +32,6 @@ DOCKER_REPO=${1:-dynamicdevices}
 
 build_and_push_image $DOCKER_REPO "raspberrypi4-64" "linux/arm64" "aarch64"
 
-build_and_push_image $DOCKER_REPO "raspberrypi3" "linux/arm/v7" "armv7hf"
+#build_and_push_image $DOCKER_REPO "raspberrypi3" "linux/arm/v7" "armv7hf"
 
 create_and_push_manifest
